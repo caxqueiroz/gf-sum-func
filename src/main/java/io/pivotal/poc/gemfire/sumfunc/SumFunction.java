@@ -3,7 +3,9 @@ package io.pivotal.poc.gemfire.sumfunc;
 
 import com.gemstone.gemfire.cache.Region;
 import com.gemstone.gemfire.cache.execute.*;
+import com.gemstone.gemfire.cache.partition.PartitionRegionHelper;
 
+import java.lang.reflect.Field;
 import java.util.Set;
 
 
@@ -12,6 +14,8 @@ import java.util.Set;
  */
 
 public class SumFunction extends FunctionAdapter{
+
+
 
 
     public boolean hasResult() {
@@ -26,7 +30,9 @@ public class SumFunction extends FunctionAdapter{
 
         RegionFunctionContext context = (RegionFunctionContext)functionContext;
 
-        Region region = context.getDataSet();
+        String fieldName = (String)functionContext.getArguments();
+
+        Region region = PartitionRegionHelper.getLocalDataForContext(context);
 
         Set keys = context.getFilter();
 
@@ -37,8 +43,22 @@ public class SumFunction extends FunctionAdapter{
         }
 
         for(Object key: keys){
-            Double value = (Double) region.get(key);
-            sum = sum + value;
+
+            if(fieldName!=null && !fieldName.equals("")){
+                try {
+                    Object object = region.get(key);
+                    Field field = object.getClass().getDeclaredField(fieldName);
+                    field.setAccessible(true);
+                    Double value = field.getDouble(object);
+                    sum = sum + value;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else{
+                Double value = (Double) region.get(key);
+                sum = sum + value;
+            }
+
         }
         resultSender.lastResult(sum);
 

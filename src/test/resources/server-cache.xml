@@ -10,4 +10,11 @@
         </region-attributes>
     </region>
 
+    <region name="dummyRegion">
+        <region-attributes data-policy="partition">
+            <key-constraint>java.lang.String</key-constraint>
+            <value-constraint>io.pivotal.poc.gemfire.sumfunc.test.Dummy</value-constraint>
+        </region-attributes>
+    </region>
+
 </cache>
