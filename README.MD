@@ -1,7 +1,11 @@
 ## To install
 
-$ mvn clean package
+`$ mvn clean package`
 
-$ gfsh 
+`$ gfsh` 
 
-gfsh> deploy --jar=target/sum-func-1.0-SNAPSHOT.jar
+`gfsh> deploy --jar=target/sum-func-1.0-SNAPSHOT.jar`
+
+### To execute via gfsh
+
+`gfsh> execute function --id=sum --region=<region name> --arguments=<field name to sum>`
