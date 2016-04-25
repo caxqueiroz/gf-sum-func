@@ -4,10 +4,11 @@ package io.pivotal.poc.gemfire.sumfunc;
 import com.gemstone.gemfire.cache.Region;
 import com.gemstone.gemfire.cache.execute.*;
 import com.gemstone.gemfire.cache.partition.PartitionRegionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.Set;
-
 
 /**
  * Created by cq on 14/4/16.
@@ -15,8 +16,7 @@ import java.util.Set;
 
 public class SumFunction extends FunctionAdapter{
 
-
-
+    private Logger log = LoggerFactory.getLogger(SumFunction.class);
 
     public boolean hasResult() {
         return true;
@@ -52,11 +52,18 @@ public class SumFunction extends FunctionAdapter{
                     Double value = field.getDouble(object);
                     sum = sum + value;
                 } catch (Exception e) {
-                    e.printStackTrace();
+
+                    log.error(e.getMessage());
                 }
             }else{
-                Double value = (Double) region.get(key);
-                sum = sum + value;
+                if(region.get(key) instanceof String){
+                    Double value =  Double.valueOf((String)region.get(key));
+                    sum = sum + value;
+                }else{
+                    Double value =  (Double) region.get(key);
+                    sum = sum + value;
+                }
+
             }
 
         }
@@ -65,7 +72,7 @@ public class SumFunction extends FunctionAdapter{
     }
 
     public String getId() {
-        return "sum";
+        return "temp-sum";
     }
 
     public boolean optimizeForWrite() {

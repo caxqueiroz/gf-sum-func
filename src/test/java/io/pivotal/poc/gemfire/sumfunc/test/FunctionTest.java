@@ -6,6 +6,7 @@ import com.gemstone.gemfire.cache.Region;
 import com.gemstone.gemfire.cache.execute.FunctionService;
 import com.gemstone.gemfire.distributed.ServerLauncher;
 import io.pivotal.poc.gemfire.sumfunc.SumFunction;
+import io.pivotal.poc.gemfire.sumfunc.SumResultFunction;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,10 +37,14 @@ public class FunctionTest {
         Cache cache = new CacheFactory().create();
 
 
-        SumFunction sumFunc = new SumFunction();
+        SumResultFunction sumFunc = new SumResultFunction();
+        SumFunction sumFunction = new SumFunction();
         FunctionService.registerFunction(sumFunc);
+        FunctionService.registerFunction(sumFunction);
+
 
         Assert.assertTrue(FunctionService.isRegistered("sum"));
+        Assert.assertTrue(FunctionService.isRegistered("temp-sum"));
 
 
         Region region = cache.getRegion("testRegion");
