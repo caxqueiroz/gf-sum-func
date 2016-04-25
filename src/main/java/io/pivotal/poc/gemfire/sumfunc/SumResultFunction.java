@@ -17,10 +17,10 @@ public class SumResultFunction extends FunctionAdapter {
     public void execute(FunctionContext functionContext) {
         RegionFunctionContext context = (RegionFunctionContext)functionContext;
 
-        String fieldName = (String)functionContext.getArguments();
-
-        if(fieldName==null)
-            fieldName = "";
+        String[] fieldNames = (String[])functionContext.getArguments();
+        String fieldName = "";
+        if(fieldNames!=null && fieldNames.length == 1)
+            fieldName = fieldNames[0];
 
         Region region = context.getDataSet();
 
