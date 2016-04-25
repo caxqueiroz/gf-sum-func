@@ -44,7 +44,7 @@ public class FunctionTest {
 
 
         Assert.assertTrue(FunctionService.isRegistered("sum"));
-        Assert.assertTrue(FunctionService.isRegistered("temp-sum"));
+        Assert.assertTrue(FunctionService.isRegistered("local-sum"));
 
 
         Region region = cache.getRegion("testRegion");

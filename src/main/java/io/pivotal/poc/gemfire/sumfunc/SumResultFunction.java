@@ -30,9 +30,9 @@ public class SumResultFunction extends FunctionAdapter {
 
         Execution execution = FunctionService.onRegion(region)
                 .withFilter(keys)
-                .withArgs(fieldName);
+                .withArgs(new String[]{fieldName});
 
-        List<Double> result = (List) execution.execute("temp-sum").getResult();
+        List<Double> result = (List) execution.execute("local-sum").getResult();
 
         Double finalResult = result.stream().collect(summingDouble(d-> d.doubleValue()));
         ResultSender<Object> resultSender = functionContext.getResultSender();

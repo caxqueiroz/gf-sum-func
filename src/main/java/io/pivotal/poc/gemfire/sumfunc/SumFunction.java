@@ -30,7 +30,11 @@ public class SumFunction extends FunctionAdapter{
 
         RegionFunctionContext context = (RegionFunctionContext)functionContext;
 
-        String fieldName = (String)functionContext.getArguments();
+        String[] fieldNames = (String[])functionContext.getArguments();
+        String fieldName = "";
+
+        if(fieldNames!=null && fieldNames.length ==1)
+            fieldName = fieldNames[0];
 
         Region region = PartitionRegionHelper.getLocalDataForContext(context);
 
@@ -72,7 +76,7 @@ public class SumFunction extends FunctionAdapter{
     }
 
     public String getId() {
-        return "temp-sum";
+        return "local-sum";
     }
 
     public boolean optimizeForWrite() {
