@@ -76,7 +76,7 @@ public class SumFunction extends FunctionAdapter{
     }
 
     public String getId() {
-        return "local-sum";
+        return "sum";
     }
 
     public boolean optimizeForWrite() {

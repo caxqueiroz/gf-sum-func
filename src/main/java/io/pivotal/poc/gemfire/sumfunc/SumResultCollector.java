@@ -6,6 +6,7 @@ import com.gemstone.gemfire.distributed.DistributedMember;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.stream.Collectors.summingDouble;
@@ -17,14 +18,22 @@ public class SumResultCollector implements ResultCollector {
 
     private final List<Double> results = new ArrayList<>();
 
+    private CountDownLatch latch = new CountDownLatch(1);
+
     @Override
     public Object getResult() throws FunctionException {
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            throw new FunctionException("Interrupted waiting for results", e);
+        }
         return results.stream().collect(summingDouble(d-> d.doubleValue()));
     }
 
     @Override
     public Object getResult(long l, TimeUnit timeUnit) throws FunctionException, InterruptedException {
-        return null;
+        latch.await(l, timeUnit);
+        return results.stream().collect(summingDouble(d-> d.doubleValue()));
     }
 
     @Override
@@ -34,16 +43,14 @@ public class SumResultCollector implements ResultCollector {
 
     @Override
     public void endResults() {
-
+        latch.countDown();
     }
 
     @Override
     public void clearResults() {
-
+        results.clear();
+        latch = new CountDownLatch(1);
     }
 
-    @Override
-    public String toString() {
-        return String.valueOf(getResult());
-    }
+
 }
